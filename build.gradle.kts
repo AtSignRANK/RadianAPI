@@ -25,7 +25,7 @@ tasks {
         options.encoding = "UTF-8"
     }
 
-    compileJava {
+    compileKotlin {
         options.encoding = "UTF-8"
     }
 
