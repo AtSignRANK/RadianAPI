@@ -14,6 +14,7 @@ repositories {
 
 val shade = configurations.create("shade")
 shade.extendsFrom(configurations.implementation.get())
+
 tasks {
 
     javadoc {
@@ -27,5 +28,14 @@ tasks {
     create<Jar>("sourceJar") {
         archiveClassifier.set("source")
         from(sourceSets["main"].allSource)
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>(rootProject.name) {
+            from(components["java"])
+            artifact(tasks["sourceJar"])
+        }
     }
 }
