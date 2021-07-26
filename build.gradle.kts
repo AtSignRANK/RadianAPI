@@ -21,12 +21,21 @@ val shade = configurations.create("shade")
 shade.extendsFrom(configurations.implementation.get())
 
 tasks {
-    javadoc {
+    withType<JavaCompile> {
         options.encoding = "UTF-8"
+
+        sourceCompatibility = "11"
+        targetCompatibility = "11"
     }
 
-    compileKotlin {
-        kotlinOptions.jvmTarget = "16"
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions.jvmTarget = "11"
+    }
+
+    processResources {
+        filesMatching("*.yml") {
+            expand(project.properties)
+        }
     }
 
     create<Jar>("sourceJar") {
@@ -34,14 +43,16 @@ tasks {
         from(sourceSets["main"].allSource)
     }
 
-    jar {
-        from (shade.map { if (it.isDirectory) it else zipTree(it) } )
+    shadowJar {
+        archiveClassifier.set(project.version.toString())
+        archiveBaseName.set(project.name)
+        archiveVersion.set("")
     }
 }
 
 publishing {
     publications {
-        create<MavenPublication>("RadianAPI") {
+        create<MavenPublication>(project.name) {
             artifact(tasks["sourceJar"])
             from(components["java"])
         }
