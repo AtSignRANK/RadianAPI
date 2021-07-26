@@ -19,23 +19,14 @@ dependencies {
 
 val shade = configurations.create("shade")
 shade.extendsFrom(configurations.implementation.get())
-
 tasks {
-    withType<JavaCompile> {
+
+    javadoc {
         options.encoding = "UTF-8"
-
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
     }
 
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
-    }
-
-    processResources {
-        filesMatching("*.yml") {
-            expand(project.properties)
-        }
+    compileKotlin {
+        kotlinOptions.jvmTarget = "16"
     }
 
     create<Jar>("sourceJar") {
@@ -43,18 +34,18 @@ tasks {
         from(sourceSets["main"].allSource)
     }
 
-    shadowJar {
-        archiveClassifier.set(project.version.toString())
-        archiveBaseName.set(project.name)
-        archiveVersion.set("")
+    jar {
+        from (shade.map { if (it.isDirectory) it else zipTree(it) })
     }
-}
 
-publishing {
-    publications {
-        create<MavenPublication>(project.name) {
-            artifact(tasks["sourceJar"])
-            from(components["java"])
+    // From monun/tap-sample-plugin
+    create<Copy>("copyToServer") {
+        from(jar)
+        val plugins = File(rootDir, ".server/plugins")
+        if (File(shade.artifacts.files.asPath).exists()) {
+            into(File(plugins, "update"))
+        } else {
+            into(plugins)
         }
     }
 }
