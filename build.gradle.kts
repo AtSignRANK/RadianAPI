@@ -26,7 +26,7 @@ tasks {
     }
 
     compileKotlin {
-        options.encoding = "UTF-8"
+        kotlinOptions.jvmTarget = "16"
     }
 
     create<Jar>("sourceJar") {
