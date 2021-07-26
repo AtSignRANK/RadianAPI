@@ -4,7 +4,7 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.Contract
 
 @ApiStatus.NonExtendable
-class Radian(private val angle: Double) {
+interface Radian(private val angle: Double) {
     private var radian = angle * 180 / Math.PI
         get() { return field }
         set(radian: Double) { field = radian }
