@@ -28,19 +28,4 @@ tasks {
         archiveClassifier.set("source")
         from(sourceSets["main"].allSource)
     }
-
-    jar {
-        from (shade.map { if (it.isDirectory) it else zipTree(it) })
-    }
-
-    // From monun/tap-sample-plugin
-    create<Copy>("copyToServer") {
-        from(jar)
-        val plugins = File(rootDir, ".server/plugins")
-        if (File(shade.artifacts.files.asPath).exists()) {
-            into(File(plugins, "update"))
-        } else {
-            into(plugins)
-        }
-    }
 }
